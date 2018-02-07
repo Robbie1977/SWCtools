@@ -1,4 +1,5 @@
-#File for converting a generated csv file to an swc formatted file as well as an id mapped csv file
+#Script for converting a generated CSV file to an SWC formatted file as well as an id mapped csv file
+#CSV files exported by Albert Cardona from his lab's CATMAID software: http://catmaid.readthedocs.io/en/stable/
 #Author:Boima Massaquoi
 
 #FILE USEAGE BELOW
@@ -7,6 +8,13 @@
 #Make sure that you use the correct directories for the files that you are acessing
 #In the command prompt provide The following Arguments:
 #"python" "csv_to_swc.py" ".csv file you want to convert" ".swc outputfile you want to generate"
+
+#IMPORTANT NOTE
+#The CSV files are generated from the Cardona Lab CATMAID software have the node xyzr values in the form of nanometers
+#This script assumes that the values are in nano meters and uses a conversion factor to convert values from nanometers to micrometers
+
+#factor for converting nanometers to micrometers
+um_factor = 1000
 
 import sys
 import csv
@@ -17,9 +25,9 @@ class nnode(object):
     def __init__(self,n_id,_type,x,y,z,r,p_id):
         self.n_id = int(n_id)
         self._type = _type
-        self.x = x
-        self.y = y
-        self. z = z
+        self.x = float(x)
+        self.y = float(y)
+        self.z = float(z)
         self.r = float(r)
         if p_id == '':
             p_id = '-1'
@@ -97,6 +105,10 @@ def write_swc():
                     h_tnode = tnode(n)
                 elif n.r<=0:
                     n.r = 5.0
+                n.x = n.x/um_factor
+                n.y = n.y/um_factor
+                n.z = n.z/um_factor
+                n.r = n.r/um_factor
                 n_list.append(n)
         
         #build the tree using the soma as the head node
